@@ -1,10 +1,10 @@
-import axios, { AxiosHeaders, AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosHeaders, AxiosRequestConfig } from 'axios'
 import { getDefaultHeaders } from './getDefaultHeaders'
 
 const defaultErrorMessage = 'Houve um erro de comunicação com o servidor'
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_API_URL as string,
   timeout: 50000,
 })
 
@@ -63,12 +63,12 @@ const handleAxiosErrors = (error: any) => {
   }
 }
 
-async function formatServerErrorResponse(error: any) {
-  if (error.name === 'AxiosError') {
+async function formatServerErrorResponse(error: unknown) {
+  if (error instanceof AxiosError) {
     return handleAxiosErrors(error)
   }
 
-  if (error.message.includes('timeout')) {
+  if (error instanceof Error && error.message.includes('timeout')) {
     return {
       message: 'Tempo de resposta do servidor expirou',
       success: false,

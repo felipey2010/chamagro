@@ -1,6 +1,11 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import {
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
   Form,
   FormControl,
   FormField,
@@ -9,26 +14,26 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff } from 'lucide-react'
-// import { signIn } from 'next-auth/react'
 import { useToast } from '@/hooks/use-toast'
 import { fadeInLeft } from '@/lib/Animations'
-import { signInSchema, SignInSchema } from '@/schema/AuthSchema'
+import { requestPasswordReset } from '@/lib/queries/auth.action'
+import { signInSchema, SignInSchema } from '@/schemas/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
+import { Eye, EyeOff } from 'lucide-react'
+import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { useAuthView } from '../Context'
-import {
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 
-function SignInView() {
+type Props = {
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+function SignInView({ setIsOpen }: Props) {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const { registeredEmail, handleView } = useAuthView()
@@ -56,36 +61,38 @@ function SignInView() {
   const onSubmit = async (data: SignInSchema) => {
     setLoading(true)
     try {
-      //   const res = await signIn('credentials', {
-      //     redirect: false,
-      //     email: data.email,
-      //     password: data.password,
-      //   })
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      })
 
-      //   if (res?.error) {
-      //     setLoading(false)
-      //     setFocus('password')
-      //     toast({
-      //       title: 'Login',
-      //       description:
-      //         'Erro de login. Verifique que seus dados estejam corretos',
-      //       variant: 'destructive',
-      //     })
-      //     return
-      //   }
+      if (res?.error) {
+        setLoading(false)
+        setFocus('password')
+        toast({
+          title: 'Login',
+          description:
+            'Erro de login. Verifique que seus dados estejam corretos',
+          variant: 'destructive',
+        })
+        return
+      }
 
-      //   if (res?.ok) {
-      //     toast({
-      //       title: 'Login',
-      //       description: 'Login realizado com sucesso',
-      //     })
-      router.push(callbackUrl || '/')
-      //   }
-    } catch (error: any) {
+      if (res?.ok) {
+        setIsOpen(false)
+        toast({
+          title: 'Login',
+          description: 'Login realizado com sucesso',
+        })
+        router.push(callbackUrl || '/')
+      }
+    } catch (error: unknown) {
       setLoading(false)
       toast({
         title: 'Erro Login',
-        description: error.message || 'Erro ao fazer login',
+        description:
+          error instanceof Error ? error.message : 'Erro ao fazer login',
         variant: 'destructive',
       })
     }
@@ -97,18 +104,19 @@ function SignInView() {
   }, [error, router, callbackUrl])
 
   const sendPasswordResetRequest = async () => {
-    // try {
-    //   const response = await requestPasswordReset(registeredEmail)
-    //   if (response.success) {
-    handleView('password-reset-code-view')
-    //   }
-    // } catch (error: any) {
-    //   toast({
-    //     title: 'Redefinição de senha',
-    //     description: error.message || 'Erro solicitando redefinição de senha',
-    //     variant: 'destructive',
-    //   })
-    // }
+    try {
+      await requestPasswordReset(registeredEmail)
+      handleView('password-reset-code-view')
+    } catch (error: unknown) {
+      toast({
+        title: 'Redefinição de senha',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Erro solicitando redefinição de senha',
+        variant: 'destructive',
+      })
+    }
   }
 
   return (

@@ -6,22 +6,26 @@ import SignInView from './views/SignInView'
 import SignUpView from './views/SignUpView'
 import VerificationCode from './views/VerificationCode'
 
-function AuthViewManager() {
+type Props = {
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+function AuthViewManager({ setIsOpen }: Props) {
   const { view } = useAuthView()
 
   const views: Record<
     | 'auth-view'
     | 'sign-in-view'
     | 'sign-up-view'
-    | 'verification-code'
+    | 'verification-view'
     | 'reset-password-view'
     | 'password-reset-code-view',
     JSX.Element
   > = {
     'auth-view': <LoginView />,
-    'sign-in-view': <SignInView />,
+    'sign-in-view': <SignInView setIsOpen={setIsOpen} />,
     'sign-up-view': <SignUpView />,
-    'verification-code': <VerificationCode />,
+    'verification-view': <VerificationCode />,
     'reset-password-view': <ResetPasswordView />,
     'password-reset-code-view': <PasswordCodeVerificationView />,
   }

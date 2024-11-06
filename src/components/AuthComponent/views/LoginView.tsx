@@ -1,3 +1,4 @@
+import { signIn } from '@/auth'
 import { Button } from '@/components/ui/button'
 import {
   DialogDescription,
@@ -14,7 +15,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
-import { authSchema, AuthSchema } from '@/schema/AuthSchema'
+import { verifyEmailExistence } from '@/lib/queries/auth.action'
+import { authSchema, AuthSchema } from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader } from 'lucide-react'
 import { useState } from 'react'
@@ -40,27 +42,28 @@ function LoginView() {
     try {
       const lowerCaseEmail = values.user_email.toLocaleLowerCase()
       setRegisteredEmail(lowerCaseEmail)
-      //   const { success, data } = await verifyEmailExistence(lowerCaseEmail)
+      const { success, data } = await verifyEmailExistence(lowerCaseEmail)
 
-      //   if (success && data) {
-      handleView('sign-in-view')
-      //   }
+      if (success && data) {
+        handleView('sign-in-view')
+      }
 
-      //   if (success && !data) {
-      //     handleView('verification-view')
-      //   }
-    } catch (error: any) {
+      if (success && !data) {
+        handleView('verification-view')
+      }
+    } catch (error: unknown) {
       setLoading(false)
       toast({
         title: 'Autenticação',
-        description: error.message || 'Erro verificando email',
+        description:
+          error instanceof Error ? error.message : 'Erro verificando email',
         variant: 'destructive',
       })
     }
   }
 
   async function handleSignIn(provider: string) {
-    // await signIn(provider, { callbackUrl: '/' })
+    await signIn(provider, { callbackUrl: '/' })
   }
 
   return (

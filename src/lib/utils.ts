@@ -12,3 +12,14 @@ export const getAvatarFallback = (name: string) =>
     .map((item) => item[0])
     .join('')
     .toUpperCase()
+
+export const getUserRole = (role: string) => {
+  const roleMap: Record<string, string> = {
+    PRODUTOR: 'Produtor',
+    TECHNICIAN: 'Técnico',
+    MERCHANT: 'Comerciante',
+    NORMAL: 'Normal',
+  }
+
+  return roleMap[role] || 'Função desconhecida'
+}

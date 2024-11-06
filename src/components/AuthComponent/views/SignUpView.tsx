@@ -1,11 +1,11 @@
 'use client'
 import { fadeInLeft } from '@/lib/Animations'
 import { motion } from 'framer-motion'
-
 import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,12 +20,21 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { signUpSchema, SignUpSchema } from '@/schema/AuthSchema'
+import { signUpSchema, SignUpSchema } from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, LoaderCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuthView } from '../Context'
+import { saveCredentials } from '@/lib/queries/auth.action'
+import { AiOutlineInfoCircle } from 'react-icons/ai'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { userFunctions } from '@/data/UserFunctions'
 
 function SignUpView() {
   const [loading, setLoading] = useState(false)
@@ -39,8 +48,8 @@ function SignUpView() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: registeredEmail,
-      firstName: '',
-      lastName: '',
+      first_name: '',
+      last_name: '',
       role: 'DEFAULT',
       password: '',
       confirmPassword: '',
@@ -52,17 +61,20 @@ function SignUpView() {
   const onSubmit = async (values: SignUpSchema) => {
     setLoading(true)
     try {
-      //   await saveCredentials(values)
+      await saveCredentials(values)
       toast({
         title: 'Perfil',
         description: 'Perfil criado com sucesso. Efetue login para continuar',
       })
       handleView('sign-in-view')
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false)
       toast({
         title: 'Erro ao salvar perfil',
-        description: error.message || 'Erro salvando perfil do usuário',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Erro salvando perfil do usuário',
         variant: 'destructive',
       })
     }
@@ -83,17 +95,17 @@ function SignUpView() {
           <h1 className="text-2xl font-bold text-foreground">
             Complete seu perfil
           </h1>
-          <div className="w-full grid grid-cols-1 md:grid-cols-2">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={control}
               disabled={loading}
-              name="firstName"
+              name="first_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel htmlFor="name_">Primeiro nome</FormLabel>
                   <FormControl>
                     <Input
-                      id="name_"
+                      id="first_name_"
                       placeholder="Informe o seu primeiro nome"
                       autoComplete="off"
                       {...field}
@@ -106,13 +118,13 @@ function SignUpView() {
             <FormField
               control={control}
               disabled={loading}
-              name="lastName"
+              name="last_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel htmlFor="name_">Sobrenome</FormLabel>
                   <FormControl>
                     <Input
-                      id="name_"
+                      id="last_name_"
                       placeholder="Informe o seu sobrenome"
                       autoComplete="off"
                       {...field}
@@ -124,37 +136,64 @@ function SignUpView() {
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-            <FormField
-              control={control}
-              disabled={loading}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="role_">Tipo de usuário</FormLabel>
-                  <FormControl>
-                    <Select
-                      name="role"
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={loading}
-                    >
-                      <SelectTrigger id="role_">
-                        <SelectValue placeholder="--selecione--" />
-                      </SelectTrigger>
-                      <SelectContent ref={field.ref}>
-                        <SelectItem value="PRODUTOR">Produtor</SelectItem>
-                        <SelectItem value="TECHNICIAN">Técnico</SelectItem>
-                        <SelectItem value="MERCHANT">Comerciante</SelectItem>
-                        <SelectItem value="DEFAULT">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={control}
+            disabled={loading}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="role_">
+                  Como pretende usar a plataforma?
+                </FormLabel>
+                <FormControl>
+                  <Select
+                    name="role"
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={loading}
+                  >
+                    <SelectTrigger id="role_">
+                      <SelectValue placeholder="--selecione--" />
+                    </SelectTrigger>
+                    <SelectContent ref={field.ref}>
+                      <SelectItem value="PRODUTOR">Produtor</SelectItem>
+                      <SelectItem value="TECHNICIAN">Técnico</SelectItem>
+                      <SelectItem value="MERCHANT">Comerciante</SelectItem>
+                      <SelectItem value="DEFAULT">Normal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormDescription className="flex items-center gap-1">
+                  Saiba mais sobre os tipos de usuários,
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger
+                        type="button"
+                        className="flex items-center gap-1"
+                      >
+                        clique aqui <AiOutlineInfoCircle />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="w-fit flex flex-col">
+                          {userFunctions.map((uf) => (
+                            <div key={uf.name}>
+                              <p>{uf.name}</p>
+                              <ul className="pl-4 list-disc">
+                                {uf.functions.map((func, index) => (
+                                  <li key={'user-function-' + index}>{func}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={control}
             disabled={loading}

@@ -6,12 +6,19 @@ export const signUpSchema = z
     password: z
       .string()
       .min(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
-      .max(12, { message: 'A senha deve ter no máximo 12 caracteres' }),
+      .max(12, { message: 'A senha deve ter no máximo 12 caracteres' })
+      .regex(/[A-Z]/, {
+        message: 'A senha deve conter pelo menos uma letra maiúscula',
+      })
+      .regex(/[a-z]/, {
+        message: 'A senha deve conter pelo menos uma letra minúscula',
+      })
+      .regex(/\d/, { message: 'A senha deve conter pelo menos um número' }),
     confirmPassword: z
       .string()
       .min(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
       .max(12, { message: 'A senha deve ter no máximo 12 caracteres' }),
-    firstName: z
+    first_name: z
       .string()
       .trim()
       .min(3, {
@@ -20,7 +27,7 @@ export const signUpSchema = z
       .max(100, {
         message: 'O nome deve ter no máximo 100 caracteres',
       }),
-    lastName: z
+    last_name: z
       .string()
       .trim()
       .min(3, {

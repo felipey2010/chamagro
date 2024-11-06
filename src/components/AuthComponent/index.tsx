@@ -17,12 +17,17 @@ function AuthComponent({ children }: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
+      <DialogContent
+        className="sm:max-w-[800px] p-0 overflow-hidden"
+        onInteractOutside={(e) => {
+          e.preventDefault()
+        }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 h-[600px]">
           <div className="p-6 flex flex-col justify-center md:border-r border-border overflow-hidden">
             <AuthViewProvider>
               <AnimatePresence>
-                <AuthViewManager />
+                <AuthViewManager setIsOpen={setIsOpen} />
               </AnimatePresence>
             </AuthViewProvider>
           </div>

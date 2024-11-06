@@ -5,7 +5,7 @@ import {
   SignInSchema,
   SignUpSchema,
   VerificationCodeSchema,
-} from '@/schema/AuthSchema'
+} from '@/schemas/auth.schema'
 import axiosFetch from '../AxiosFetch'
 
 export async function verifyEmailExistence(userEmail: string) {
@@ -20,8 +20,10 @@ export async function verifyEmailExistence(userEmail: string) {
     }
 
     return response
-  } catch (error: any) {
-    throw new Error(error.message || 'Erro de verificação de email')
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Erro de verificação de email'
+    )
   }
 }
 
@@ -38,8 +40,10 @@ export async function checkVerificationCode(values: VerificationCodeSchema) {
     }
 
     return response
-  } catch (error: any) {
-    throw new Error(error.message || 'Erro de verificação de código')
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Erro de verificação de código'
+    )
   }
 }
 
@@ -57,8 +61,12 @@ export async function requestPasswordReset(email: string) {
     }
 
     return response
-  } catch (error: any) {
-    throw new Error(error.message || 'Erro ao solicitar redefinição de senha')
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Erro ao solicitar redefinição de senha'
+    )
   }
 }
 
@@ -78,9 +86,11 @@ export async function verifiyPasswordResetCode(values: VerificationCodeSchema) {
     }
 
     return response
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw new Error(
-      error.message || 'Erro ao verificar o código de redefinição de senha'
+      error instanceof Error
+        ? error.message
+        : 'Erro ao verificar o código de redefinição de senha'
     )
   }
 }
@@ -88,6 +98,10 @@ export async function verifiyPasswordResetCode(values: VerificationCodeSchema) {
 export async function resetPassword(values: PasswordResetSchema) {
   try {
     const { confirmPassword, ...rest } = values
+    if (confirmPassword !== values.password) {
+      throw new Error('As senhas não correspondem')
+    }
+
     const response = await axiosFetch({
       url: '/auth/account/reset-password',
       method: 'POST',
@@ -99,16 +113,18 @@ export async function resetPassword(values: PasswordResetSchema) {
     }
 
     return response
-  } catch (error: any) {
-    throw new Error(error.message || 'Erro ao redefinir a senha')
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Erro ao redefinir a senha'
+    )
   }
 }
 
 export async function saveCredentials(userCredentials: SignUpSchema) {
   try {
-    const { confirmPassword, ...rest } = userCredentials
-    const userToSave = {
-      ...rest,
+    const { confirmPassword, ...userToSave } = userCredentials
+    if (confirmPassword !== userCredentials.password) {
+      throw new Error('As senhas não correspondem')
     }
 
     const response = await axiosFetch({
@@ -122,8 +138,10 @@ export async function saveCredentials(userCredentials: SignUpSchema) {
     }
 
     return response
-  } catch (error: any) {
-    throw new Error(error.message || 'Erro ao salvar dados do usuário')
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Erro ao salvar dados do usuário'
+    )
   }
 }
 
@@ -140,7 +158,9 @@ export async function loginUser(credentials: SignInSchema) {
     }
 
     return response
-  } catch (error: any) {
-    throw new Error(error.message || 'Erro ao fazer login')
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Erro ao fazer login'
+    )
   }
 }

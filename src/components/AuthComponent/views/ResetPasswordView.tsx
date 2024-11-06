@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { fadeInRight } from '@/lib/Animations'
-import { passwordResetSchema, PasswordResetSchema } from '@/schema/AuthSchema'
+import { passwordResetSchema, PasswordResetSchema } from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { useAuthView } from '../Context'
+import { resetPassword } from '@/lib/queries/auth.action'
 
 function ResetPasswordView() {
   const [loading, setLoading] = useState(false)
@@ -51,19 +52,20 @@ function ResetPasswordView() {
   const onSubmit = async (data: PasswordResetSchema) => {
     setLoading(true)
     try {
-      //   const response = await resetPassword(data)
-      //   if (response.success) {
-      //     toast({
-      //       title: 'Redefinição de senha',
-      //       description: 'Senha redefinida com sucesso',
-      //     })
-      handleView('sign-in-view')
-      //   }
-    } catch (error: any) {
+      const response = await resetPassword(data)
+      if (response.success) {
+        toast({
+          title: 'Redefinição de senha',
+          description: 'Senha redefinida com sucesso',
+        })
+        handleView('sign-in-view')
+      }
+    } catch (error: unknown) {
       setLoading(false)
       toast({
         title: 'Erro - Redefinição de senha',
-        description: error.message || 'Erro ao redefinir senha',
+        description:
+          error instanceof Error ? error.message : 'Erro ao redefinir senha',
         variant: 'destructive',
       })
     }
@@ -201,7 +203,7 @@ function ResetPasswordView() {
             name="Redefinir"
             disabled={loading}
             size="lg"
-            className="w-full mb-4"
+            className="w-full"
           >
             {loading && (
               <AiOutlineLoading3Quarters className="h-5 w-5 mr-2 animate-spin" />

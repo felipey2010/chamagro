@@ -14,10 +14,12 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp'
 import { useToast } from '@/hooks/use-toast'
+import { fadeInRight } from '@/lib/Animations'
+import { verifiyPasswordResetCode } from '@/lib/queries/auth.action'
 import {
   verificationCodeSchema,
   VerificationCodeSchema,
-} from '@/schema/AuthSchema'
+} from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
@@ -25,7 +27,6 @@ import { Loader } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuthView } from '../Context'
-import { fadeInRight } from '@/lib/Animations'
 
 function PasswordCodeVerificationView() {
   const [loading, setLoading] = useState(false)
@@ -44,16 +45,15 @@ function PasswordCodeVerificationView() {
   const onSubmit = async (values: VerificationCodeSchema) => {
     setLoading(true)
     try {
-      //   const response = await verifiyPasswordResetCode(values)
-      //   if (response.success) {
+      await verifiyPasswordResetCode(values)
       setVerificationCode(values.code)
       handleView('reset-password-view')
-      //   }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false)
       toast({
         title: 'Redefinição de senha',
-        description: error.message || 'Erro verificando código',
+        description:
+          error instanceof Error ? error.message : 'Erro verificando código',
         variant: 'destructive',
       })
     }

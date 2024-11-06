@@ -1,15 +1,3 @@
-import { fadeInLeft } from '@/lib/Animations'
-import { motion } from 'framer-motion'
-import { useAuthView } from '../Context'
-import { useToast } from '@/hooks/use-toast'
-import {
-  verificationCodeSchema,
-  VerificationCodeSchema,
-} from '@/schema/AuthSchema'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -24,7 +12,20 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp'
+import { useToast } from '@/hooks/use-toast'
+import { fadeInLeft } from '@/lib/Animations'
+import { checkVerificationCode } from '@/lib/queries/auth.action'
+import {
+  verificationCodeSchema,
+  VerificationCodeSchema,
+} from '@/schemas/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { motion } from 'framer-motion'
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
 import { Loader } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useAuthView } from '../Context'
 
 function VerificationCode() {
   const [loading, setLoading] = useState(false)
@@ -42,15 +43,16 @@ function VerificationCode() {
   const onSubmit = async (values: VerificationCodeSchema) => {
     setLoading(true)
     try {
-      //   const response = await checkVerificationCode(values)
-      //   if (response.success) {
-      handleView('sign-up-view')
-      //   }
-    } catch (error: any) {
+      const response = await checkVerificationCode(values)
+      if (response.success) {
+        handleView('sign-up-view')
+      }
+    } catch (error: unknown) {
       setLoading(false)
       toast({
         title: 'Verificação de código',
-        description: error.message || 'Erro verificando código',
+        description:
+          error instanceof Error ? error.message : 'Erro verificando código',
         variant: 'destructive',
       })
     }
@@ -71,7 +73,7 @@ function VerificationCode() {
           Código de Verificação
         </h1>
         <div className="w-full flex flex-col text-muted-foreground text-base">
-          <p className="w-full">
+          <p className="w-full text-pretty">
             Acabamos de enviar um e-mail para <strong>{registeredEmail}</strong>{' '}
             com um código de 6 dígitos.
           </p>

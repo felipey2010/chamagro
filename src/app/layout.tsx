@@ -1,7 +1,13 @@
-import type { Metadata } from 'next'
-import localFont from 'next/font/local'
-import '@/styles/globals.css'
+import { auth } from '@/auth'
+import CookieConsentComponent from '@/components/CookieConsentComponent'
+import { ReactQueryProvider } from '@/components/ReactQueryProvider'
+import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/toaster'
+import '@/styles/globals.css'
+import type { Metadata } from 'next'
+import { SessionProvider } from 'next-auth/react'
+import localFont from 'next/font/local'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -19,11 +25,13 @@ export const metadata: Metadata = {
   description: 'Sistema de chamadas para produtores, técnicos e outros órgãos',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const session = await auth()
+
   return (
     <html lang="pt-br" suppressHydrationWarning={true}>
       <body
@@ -35,7 +43,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <SessionProvider session={session} refetchWhenOffline={false}>
+            <ReactQueryProvider>
+              {children}
+              <ScrollToTopButton />
+              <Toaster />
+              <CookieConsentComponent />
+            </ReactQueryProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
