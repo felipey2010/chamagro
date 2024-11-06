@@ -1,7 +1,4 @@
-import AuthComponent from '@/components/AuthComponent'
-import { Button } from '@/components/ui/button'
-import { Arrow } from '@radix-ui/react-dropdown-menu'
-import {Info, Pill, RefreshCcw, Rocket } from 'lucide-react'
+import { Info, Pill, RefreshCcw, Rocket } from 'lucide-react'
 import Image from 'next/image'
 
 
