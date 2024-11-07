@@ -1,6 +1,4 @@
 'use client'
-import { fadeInLeft } from '@/lib/Animations'
-import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -19,22 +17,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useToast } from '@/hooks/use-toast'
-import { signUpSchema, SignUpSchema } from '@/schemas/auth.schema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff, LoaderCircle } from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useAuthView } from '../Context'
-import { saveCredentials } from '@/lib/queries/auth.action'
-import { AiOutlineInfoCircle } from 'react-icons/ai'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { userFunctions } from '@/data/UserFunctions'
+import { roleDescriptions, UserRoles } from '@/data/roles'
+import { useToast } from '@/hooks/use-toast'
+import { fadeInLeft } from '@/lib/Animations'
+import { saveCredentials } from '@/lib/queries/auth.action'
+import { signUpSchema, SignUpSchema } from '@/schemas/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { motion } from 'framer-motion'
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { AiOutlineInfoCircle } from 'react-icons/ai'
+import { useAuthView } from '../Context'
 
 function SignUpView() {
   const [loading, setLoading] = useState(false)
@@ -156,10 +156,12 @@ function SignUpView() {
                       <SelectValue placeholder="--selecione--" />
                     </SelectTrigger>
                     <SelectContent ref={field.ref}>
-                      <SelectItem value="PRODUTOR">Produtor</SelectItem>
-                      <SelectItem value="TECHNICIAN">Técnico</SelectItem>
-                      <SelectItem value="MERCHANT">Comerciante</SelectItem>
-                      <SelectItem value="DEFAULT">Normal</SelectItem>
+                      {/* TO DO: Load roles from database */}
+                      {UserRoles.map((role, index) => (
+                        <SelectItem key={'role-' + index} value={role.value}>
+                          {role.title}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -175,12 +177,12 @@ function SignUpView() {
                       </TooltipTrigger>
                       <TooltipContent>
                         <div className="w-fit flex flex-col">
-                          {userFunctions.map((uf) => (
-                            <div key={uf.name}>
-                              <p>{uf.name}</p>
+                          {roleDescriptions.map((role) => (
+                            <div key={role.name}>
+                              <p>{role.name}</p>
                               <ul className="pl-4 list-disc">
-                                {uf.functions.map((func, index) => (
-                                  <li key={'user-function-' + index}>{func}</li>
+                                {role.description.map((func, index) => (
+                                  <li key={'description-' + index}>{func}</li>
                                 ))}
                               </ul>
                             </div>

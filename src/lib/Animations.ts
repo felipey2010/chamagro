@@ -64,20 +64,18 @@ export function fadeInFromLeft(index: number) {
   }
 }
 
-export function fadeIn(index: number) {
-  return {
-    initial: {
-      opacity: 0,
+export const fadeIn = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+    transition: {
+      delay: 0.2,
+      duration: 0.4,
+      ease: 'easeIn',
     },
-    animate: {
-      opacity: 1,
-      transition: {
-        delay: 0.2 * index,
-        duration: 0.4,
-        ease: 'easeIn',
-      },
-    },
-  }
+  },
 }
 
 export const fadeInFromBottom = {

@@ -1,5 +1,6 @@
 import { auth } from '@/auth'
 import CookieConsentComponent from '@/components/CookieConsentComponent'
+import LayoutManager from '@/components/layouts/LayoutManager'
 import { ReactQueryProvider } from '@/components/ReactQueryProvider'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -45,7 +46,7 @@ export default async function RootLayout({
         >
           <SessionProvider session={session} refetchWhenOffline={false}>
             <ReactQueryProvider>
-              {children}
+              <LayoutManager>{children}</LayoutManager>
               <ScrollToTopButton />
               <Toaster />
               <CookieConsentComponent />

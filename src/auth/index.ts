@@ -71,11 +71,10 @@ const config = {
 
           const { success, data } = await loginUser(parsedCredentials.data)
           if (success && data) {
-            const { name, username, email, image, id, role } = data
+            const { name, email, image, id, role } = data
             return {
               id,
               name,
-              username,
               email,
               image,
               role,

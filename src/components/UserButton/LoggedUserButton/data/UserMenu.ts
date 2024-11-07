@@ -1,10 +1,10 @@
+import { USER_MENU_LINKS } from '@/data/AppRoutes'
 import { IconType } from 'react-icons/lib'
 import {
   MdOutlineSettings,
   MdOutlineSupportAgent,
   MdRssFeed,
 } from 'react-icons/md'
-import { USER_MENU_LINKS } from './AppRoutes'
 
 export type UserMenuType = {
   title: string

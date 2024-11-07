@@ -1,4 +1,4 @@
-import { DropdownMenuItem } from 'components/ui/dropdown-menu'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { signOut } from 'next-auth/react'
 import { MdOutlineLogout } from 'react-icons/md'
 

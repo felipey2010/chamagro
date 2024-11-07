@@ -12,6 +12,7 @@ export const APP_ROUTES = {
   NEWS: '/novidades',
   GET_STARTED: '/quero-comecar',
   PROFILE_SETUP: '/onboarding/perfil',
+  LOGIN: '/auth/login',
 }
 
 export const USER_MENU_LINKS = {

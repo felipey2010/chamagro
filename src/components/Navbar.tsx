@@ -1,14 +1,19 @@
-import { Bell } from 'lucide-react'
-import PhotoComponent from './PhotoComponent'
+import Image from 'next/image'
+import Link from 'next/link'
+import UserButton from './UserButton'
 
 function Navbar() {
   return (
-    <div className="w-full h-10 flex items-center justify-end">
-      <div className="flex items-center gap-4">
-        <Bell />
-        <PhotoComponent name="User Test" src="" />
+    <header className="w-full bg-green-500 mb-28">
+      <div className="px-12 m-auto h-20 flex justify-between items-center max-w-full ">
+        <Link href="/">
+          <Image src="/assets/iconLogo.svg" alt="home" width={97} height={49} />
+        </Link>
+        <nav>
+          <UserButton />
+        </nav>
       </div>
-    </div>
+    </header>
   )
 }
 

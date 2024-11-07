@@ -15,7 +15,7 @@ export const getAvatarFallback = (name: string) =>
 
 export const getUserRole = (role: string) => {
   const roleMap: Record<string, string> = {
-    PRODUTOR: 'Produtor',
+    FARMER: 'Produtor',
     TECHNICIAN: 'Técnico',
     MERCHANT: 'Comerciante',
     NORMAL: 'Normal',

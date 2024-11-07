@@ -9,17 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { userMenu } from '@/data/UserMenu'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import Logout from './Logout'
 import { getUserRole } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
+import { userMenu } from './data/UserMenu'
+import Logout from './Logout'
 
 export type userProps = {
   id?: string
   name: string
-  username?: string
   image?: string
+  role: string
+  email: string
 }
 
 type Props = {
@@ -29,8 +29,7 @@ type Props = {
 
 function LoggedUserButton({ user, role }: Props) {
   const router = useRouter()
-  const { name, image } = user
-  const username = user.username || ''
+  const { name, image, email } = user
 
   return (
     <DropdownMenu>
@@ -49,13 +48,10 @@ function LoggedUserButton({ user, role }: Props) {
           <div className="flex flex-col space-y-2">
             <p className="text-sm leading-none">{name}</p>
             <div className="w-full flex items-center gap-2 justify-between">
-              {username && (
-                <Link
-                  href={`/${username}`}
-                  className="text-xs leading-none text-muted-foreground hover:underline line-clamp-1"
-                >
-                  @{username}
-                </Link>
+              {email && (
+                <p className="text-xs leading-none text-muted-foreground line-clamp-1">
+                  {email}
+                </p>
               )}
               {role && (
                 <p className="text-xs leading-none text-muted-foreground">
