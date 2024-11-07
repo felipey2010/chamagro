@@ -1,7 +1,6 @@
 'use server'
 
 import { auth } from '@/auth'
-import { ProfileSetupSchema } from '@/schemas/onbarding.schema'
 import axiosFetch from '../AxiosFetch'
 
 async function getSessionUser() {
@@ -12,39 +11,6 @@ async function getSessionUser() {
   }
 
   return session.user
-}
-
-export async function createUserProfile(
-  userData: ProfileSetupSchema
-): Promise<{ success: boolean; data: any; message: string }> {
-  const session = await getSessionUser()
-
-  const userToSave = {
-    ...userData,
-    id: session.id,
-    email: session.email,
-    image: session.image || '',
-    available_for_mentoring: userData.available_for_mentoring === 'true',
-    auth_provider: session.provider.toUpperCase() || 'EMAIL',
-  }
-
-  try {
-    const response = await axiosFetch({
-      url: '/users',
-      method: 'POST',
-      data: userToSave,
-    })
-
-    if (!response.success) {
-      throw new Error(response.message || 'Erro ao criar perfil de usuário.')
-    }
-
-    return response
-  } catch (error: unknown) {
-    throw new Error(
-      error instanceof Error ? error.message : 'Erro ao criar perfil de usuário'
-    )
-  }
 }
 
 export async function getDatabaseUser(userEmail?: string) {

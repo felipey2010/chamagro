@@ -3,6 +3,7 @@ import {
   Calendar,
   Home,
   Inbox,
+  Newspaper,
   Phone,
   Settings,
   Shield,
@@ -15,7 +16,7 @@ import {
 export const dashboardSidebarItems = [
   {
     title: 'Inicial',
-    url: '#',
+    url: '/',
     icon: Home,
   },
   {
@@ -26,49 +27,54 @@ export const dashboardSidebarItems = [
     items: [
       {
         title: 'Usuários',
-        url: '#',
+        url: '/admin/usuarios',
         icon: Users2,
       },
       {
         title: 'Perfis de Acesso',
-        url: '#',
+        url: '/admin/perfis',
         icon: UserRoundPen,
       },
     ],
   },
   {
     title: 'Chamados',
-    url: '#',
+    url: '/chamados',
     icon: Phone,
   },
   {
     title: 'Equipe',
-    url: '#',
+    url: '/equipe',
     icon: Users,
   },
   {
     title: 'Mensagens',
-    url: '#',
+    url: '/mensagens',
     icon: Inbox,
   },
   {
     title: 'Posts',
-    url: '#',
+    url: '/posts',
     icon: SquarePen,
   },
   {
+    title: 'Informes',
+    url: '/informes',
+    icon: Newspaper,
+  },
+  {
     title: 'Suporte',
-    url: '#',
+    url: '/suporte',
     icon: Calendar,
   },
   {
     title: 'Notificações',
-    url: '#',
+    url: '/notificacoes',
     icon: Bell,
   },
   {
     title: 'Configuraçoes',
-    url: '#',
+    url: '/configuracoes',
     icon: Settings,
   },
 ]

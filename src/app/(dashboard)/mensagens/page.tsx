@@ -1,5 +1,5 @@
 function MensagensPage() {
-  return <div>MensagensPage</div>
+  return <div>Página de mensagens</div>
 }
 
 export default MensagensPage
